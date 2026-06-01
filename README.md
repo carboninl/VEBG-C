@@ -1,1 +1,3 @@
-compile with `gcc -Wall -Wextra -pedantic main.c list.c -o main` and run with `./main.exe`
+1. compile with `gcc -Wall -Wextra -pedantic main.c list.c -o main` 
+
+2. run with `./main.exe` or `./main.out`
