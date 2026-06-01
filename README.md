@@ -1,0 +1,1 @@
+compile with `gcc -Wall -Wextra -pedantic main.c list.c -o main` and run with `./main.exe`
