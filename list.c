@@ -78,3 +78,4 @@ void free_list(List *list) {
     free(list->items);
     free(list);
 }
+

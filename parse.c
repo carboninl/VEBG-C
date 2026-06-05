@@ -134,6 +134,47 @@ static ExprC *parseList(List *exp) {
         return e;
     }
 
+    // given expression: {given {{x = e1} {y = e2}} do body}
+    if (exp->count == 4 &&
+        exp->items[0].type == ITEM_STRING &&
+        strcmp(exp->items[0].value.string, "given") == 0 &&
+        exp->items[1].type == ITEM_LIST &&
+        exp->items[2].type == ITEM_STRING &&
+        strcmp(exp->items[2].value.string, "do") == 0) {
+
+        List *bindings = exp->items[1].value.list;
+
+        char **names = malloc(sizeof(char *) * bindings->count);
+        ExprC **values = malloc(sizeof(ExprC *) * bindings->count);
+
+        for (int i = 0; i < bindings->count; i++) {
+            if (bindings->items[i].type != ITEM_LIST) {
+                free(names);
+                free(values);
+                return NULL;
+            }
+
+            List *binding = bindings->items[i].value.list;
+
+            if (binding->count != 3 ||
+                binding->items[0].type != ITEM_STRING ||
+                binding->items[1].type != ITEM_STRING ||
+                strcmp(binding->items[1].value.string, "=") != 0) {
+                free(names);
+                free(values);
+                return NULL;
+            }
+
+            names[i] = strdup(binding->items[0].value.string);
+            values[i] = parseItem(&binding->items[2]);
+
+        }
+
+        ExprC *body = parseItem(&exp->items[3]);
+
+        return new_given(names, values, bindings->count, body);
+    }
+
     // function application: (func arg1 arg2 ...)
     ExprC *e = calloc(1, sizeof(ExprC));
     e->type = APP_C;
