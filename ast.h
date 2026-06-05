@@ -73,7 +73,7 @@ static ExprC *new_bool(int b) {
 }
 
 static ExprC *new_str(char *s) {
-    ExprC *expr =malloc(sizeof(ExprC));
+    ExprC *expr = malloc(sizeof(ExprC));
     if (expr == NULL) {
         perror("malloc");
         exit(1);
@@ -99,11 +99,10 @@ static ExprC *new_if(ExprC *cond, ExprC *then_branch, ExprC *else_branch) {
 }
 
 static ExprC *new_lam(char **params, int num_params, ExprC *body) {
-    ExprC *expr = malloc(sizeof(ExprC)){
-        if (expr == NULL) {
-            perror("malloc");
-            exit(1);
-        }
+    ExprC *expr = malloc(sizeof(ExprC)); 
+    if (expr == NULL) {
+         perror("malloc");
+        exit(1);
     }
 
     expr->type = LAM_C;
@@ -112,3 +111,54 @@ static ExprC *new_lam(char **params, int num_params, ExprC *body) {
     expr->body = body;
     return expr;
 }
+
+static ExprC *new_app(ExprC *func, ExprC **args, int num_args) {
+    ExprC *expr = malloc(sizeof(ExprC));
+    if (expr == NULL) {
+        perror("malloc");
+        exit(1);
+    }
+
+    expr->type = APP_C;
+    expr->func = func;
+    expr->args = args;
+    expr->num_args = num_args;
+    return expr;
+}
+
+
+static ExprC *new_id(char *name) {
+    ExprC *expr = malloc(sizeof(ExprC));
+    if (expr == NULL) {
+        perror("malloc");
+        exit(1);
+    }
+
+    expr->type = ID_C;
+    expr->str = name;
+    return expr;
+}
+
+static int contains_duplicates(char **names, int count) {
+    for (int i = 0; i < count; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (strcmp(names[i], names[j]) == 0){
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+static ExprC *new_given(char **names, ExprC **values, int num_bindings, ExprC *body) {
+    if (contains_duplicates(names, num_bindings)) {
+        fprintf(stderr, "VEBG: given introduces duplicate local names\n");
+        exit(1);
+    }
+
+    return new_app(new_lam(names, num_bindings, body), values, num_bindings);
+}
+
+
+#endif
