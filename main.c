@@ -1,23 +1,11 @@
-#include "list.h"
+#include "interp.h"
+#include "parse.h"
 
-int main(){
-    // {fn (x y z) -> {+ 1 2}}
-    List *exp = create_list();
-    add_string(exp, "fn");
+int main(void) {
+    const char *end;
+    
+    top_interp(parse(tokenize("{{fn {x} -> {+ x 1}} 9}", &end)));
+    top_interp(parse(tokenize("{given {{x = 10} {y = 20}} do {+ x y}}", &end)));
 
-    List *args = create_list();
-    add_string(args, "x");
-    add_string(args, "y");
-    add_string(args, "z");
-    add_list(exp, args);
-
-    add_string(exp, "->");
-
-    List *body = create_list();
-    add_string(body, "+");
-    add_string(body, "1");
-    add_string(body, "2");
-    add_list(exp, body);
-
-    print_list(exp, 0);
+    return 0;
 }
