@@ -2,8 +2,37 @@
 #include <stdbool.h> 
 #include <stdlib.h>
 #include <stdio.h>   
+#include <ctype.h>
+
 
 #include "list.h"
+
+bool isNum(char* num){
+    while(*num != '\0'){
+        if (!isdigit(*num)){
+            return false;
+        }
+        num++;
+    }
+    return true;
+}
+
+void parse(List* exp){
+    if (exp == NULL) return;
+
+    if (exp->count == 3 &&
+        exp->items[0].type == ITEM_STRING &&
+        strcmp(exp->items[0].value.string, "+") == 0 &&
+        exp->items[1].type == ITEM_STRING &&
+        exp->items[2].type == ITEM_STRING &&
+        isNum(exp->items[1].value.string) &&
+        isNum(exp->items[2].value.string)) {
+
+        printf("RETURN AST: PlusC(%s %s)\n",
+               exp->items[1].value.string,
+               exp->items[2].value.string);
+    }
+}
 
 List *tokenize(const char *str, const char **endptr){
     List *list = create_list();
@@ -78,9 +107,10 @@ int main(){
     //print_list(exp, 0);
 
     const char *end;
-    print_list(tokenize("{fn {x y z} -> {+ 1 2}}", &end), 0);
-    print_list(tokenize("{+ 1 2}", &end), 0);
-    print_list(tokenize("{given {{a = 1}{b = 2} do {* a b}}}", &end), 0);
-    print_list(tokenize("{}", &end), 0);
+    // print_list(tokenize("{fn {x y z} -> {+ 1 2}}", &end), 0);
+    // print_list(tokenize("{+ 1 2}", &end), 0);
+    // print_list(tokenize("{given {{a = 1}{b = 2} do {* a b}}}", &end), 0);
+    // print_list(tokenize("{}", &end), 0);
 
+    parse(tokenize("{+ 1 2}", &end));
 }
