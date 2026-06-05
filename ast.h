@@ -1,3 +1,6 @@
+#ifndef AST_H
+#define AST_H
+
 typedef enum {
     NUM_C,
     BOOL_C,
@@ -40,3 +43,5 @@ struct ExprC {
     ExprC **args;
     int num_args;
 };
+
+#endif
