@@ -160,5 +160,4 @@ static ExprC *new_given(char **names, ExprC **values, int num_bindings, ExprC *b
     return new_app(new_lam(names, num_bindings, body), values, num_bindings);
 }
 
-
 #endif
